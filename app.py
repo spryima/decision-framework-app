@@ -416,7 +416,7 @@ CRITERIA = [
         "type": "scale",
         "default": 5.0,
         "what": "Чи відкриває доступ до ринків, клієнтів, партнерів, знань або можливостей, які інакше були б недоступні?",
-        "anchors": {"10": "Відкриває багато сильних траєкторій на 12–36 міс.: нові ринки, ролі, партнерства, deal flow, сценарії pivot.", "7": "Відкриває кілька реальних наступних ходів.", "5": "Дає обмежену, але корисну майбутню гнучкість.", "3": "Майже не створює нових ходів або створює слабкі опції.", "0": "Фіксує в жорсткій траєкторії, звужує маневр."},
+        "anchors": {"10": "Відкриває багато сильних траєкторій: нові ринки, ролі, партнерства, сценарії", "7": "Відкриває кілька реальних наступних ходів.", "5": "Дає обмежену, але корисну майбутню гнучкість.", "3": "Майже не створює нових ходів або створює слабкі опції.", "0": "Фіксує в жорсткій траєкторії, звужує маневр."},
         "evidence": "Конкретні майбутні сценарії, право без зобов’язання, нові ринки, deal flow, опції pivot.",
     },
     {
@@ -760,18 +760,18 @@ div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] {
   display: grid !important;
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   gap: 10px !important; width: 100% !important;
-  margin: 10px 0 0 0 !important; overflow: visible !important;
+  margin: 8px 0 0 0 !important; overflow: visible !important;
   align-items: stretch !important;
 }
 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label {
   position: relative !important;
-  min-height: 170px !important;
-  height: 100% !important;
+  min-height: 118px !important;
+  height: auto !important;
   align-self: stretch !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--radius-lg) !important;
-  padding: 16px 18px 16px 22px !important;
+  padding: 14px 14px 14px 18px !important;
   background: var(--surface) !important;
   display: flex !important; align-items: flex-start !important;
   justify-content: flex-start !important; text-align: left !important;
@@ -818,8 +818,8 @@ div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label 
 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label p,
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label div[data-testid="stMarkdownContainer"] p {
-  margin: 0 !important; padding-right: 20px !important;
-  font-size: 14.5px !important; line-height: 1.36 !important;
+  margin: 0 !important; padding-right: 8px !important;
+  font-size: 14.2px !important; line-height: 1.30 !important;
   font-weight: 500 !important; color: var(--text-body) !important;
   white-space: normal !important; word-break: normal !important; overflow-wrap: break-word !important;
 }
@@ -829,7 +829,7 @@ div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label 
 }
 @media (max-width: 780px) {
   div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: 1fr !important; }
-  div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label { min-height: 92px !important; height: auto !important; }
+  div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label { min-height: 84px !important; height: auto !important; }
 }
 
 /* ============================================================
