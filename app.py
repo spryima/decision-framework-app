@@ -1603,8 +1603,6 @@ div[class*="st-key-ahp_choice_"] div[data-testid="stButton"] button span {
    Streamlit changes internal data-testid names between releases. */
 #MainMenu,
 footer,
-header[data-testid="stHeader"],
-[data-testid="stHeader"],
 div[data-testid="stToolbar"],
 [data-testid="stToolbar"],
 div[data-testid="stToolbarActions"],
@@ -1666,11 +1664,49 @@ button[title*="more" i] {
   pointer-events: none !important;
 }
 
-/* Defensive fallback: hide fixed Streamlit-only controls in the top-right corner. */
-.stApp > div[style*="position: fixed"][style*="top: 0"],
-.stApp > div[style*="position: fixed"][style*="top:0"],
-.stApp > div[style*="position: absolute"][style*="top: 0"][style*="right"],
-.stApp > div[style*="position: absolute"][style*="top:0"][style*="right"] {
+
+
+/* Keep Streamlit header/sidebar structural containers alive; hide only controls. */
+header[data-testid="stHeader"],
+[data-testid="stHeader"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: #0b1118 !important;
+}
+
+section[data-testid="stSidebar"],
+[data-testid="stSidebar"],
+[data-testid="stSidebar"] > div,
+[data-testid="stSidebarContent"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+section[data-testid="stSidebar"],
+[data-testid="stSidebar"] {
+  min-width: 280px !important;
+  width: 280px !important;
+  max-width: 280px !important;
+  transform: none !important;
+}
+@media (max-width: 820px) {
+  section[data-testid="stSidebar"],
+  [data-testid="stSidebar"] {
+    min-width: 0 !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+/* Additional safe selectors for top-right Cloud controls without touching sidebar containers. */
+header[data-testid="stHeader"] [data-testid="stToolbar"],
+header[data-testid="stHeader"] [data-testid="stToolbarActions"],
+header[data-testid="stHeader"] [data-testid="stHeaderActionElements"],
+header[data-testid="stHeader"] [data-testid="stStatusWidget"],
+header[data-testid="stHeader"] [class*="stToolbar"],
+header[data-testid="stHeader"] [class*="stStatusWidget"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
