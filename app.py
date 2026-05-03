@@ -574,7 +574,7 @@ html, body, [data-testid="stAppViewContainer"], .stApp {
 }
 .block-container {
   max-width: 1320px !important;
-  padding: 3.5rem 2.5rem 4rem 2.5rem !important;
+  padding: 3.25rem 2rem 4rem 2rem !important;
 }
 @media (max-width: 820px) {
   .block-container { padding: 2.5rem 1rem 3rem 1rem !important; }
@@ -740,20 +740,20 @@ div[data-testid="stRadio"] label[data-testid="stWidgetLabel"] { display: none !i
 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] {
   display: grid !important;
-  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-  gap: 10px !important; width: 100% !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important; width: 100% !important;
   margin: 10px 0 0 0 !important; overflow: visible !important;
   align-items: stretch !important;
 }
 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label {
   position: relative !important;
-  min-height: 170px !important;
-  height: 100% !important;
+  min-height: 118px !important;
+  height: auto !important;
   align-self: stretch !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--radius-lg) !important;
-  padding: 18px 16px 16px 20px !important;
+  padding: 16px 18px 16px 22px !important;
   background: var(--surface) !important;
   display: flex !important; align-items: flex-start !important;
   justify-content: flex-start !important; text-align: left !important;
@@ -801,13 +801,13 @@ div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label p,
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label div[data-testid="stMarkdownContainer"] p {
   margin: 0 !important; padding-right: 20px !important;
-  font-size: 15px !important; line-height: 1.42 !important;
+  font-size: 14.5px !important; line-height: 1.36 !important;
   font-weight: 500 !important; color: var(--text-body) !important;
   white-space: normal !important; word-break: normal !important; overflow-wrap: break-word !important;
 }
 
-@media (max-width: 1200px) {
-  div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+@media (max-width: 1080px) {
+  div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 }
 @media (max-width: 780px) {
   div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: 1fr !important; }
@@ -1597,14 +1597,12 @@ div[class*="st-key-ahp_choice_"] div[data-testid="stButton"] button span {
 
 
 
-/* --- Hard-hide Streamlit Cloud chrome / top-right controls --------
-   Hides the Share/star/GitHub/edit/menu square buttons rendered by
-   Streamlit Cloud. The selectors are intentionally redundant because
-   Streamlit changes internal data-testid names between releases. */
+/* --- Safe Streamlit chrome handling ---------------------------------
+   Keep the Streamlit header alive because the sidebar reopen button
+   lives there when the sidebar is collapsed. Hide only non-essential
+   cloud toolbar/menu elements. */
 #MainMenu,
 footer,
-header[data-testid="stHeader"],
-[data-testid="stHeader"],
 div[data-testid="stToolbar"],
 [data-testid="stToolbar"],
 div[data-testid="stToolbarActions"],
@@ -1620,7 +1618,6 @@ div[data-testid="stAppDeployButton"],
 div[data-testid="stDeployButton"],
 [data-testid="stDeployButton"],
 [data-testid="stConnectionStatus"],
-[data-testid="stActionButton"],
 [class*="stToolbar"],
 [class*="stStatusWidget"],
 [class*="stAppDeployButton"],
@@ -1638,44 +1635,72 @@ div[data-testid="stDeployButton"],
   pointer-events: none !important;
 }
 
-/* Remove any remaining header buttons if Streamlit renders them without testids. */
-header button,
-header a,
-header [role="button"],
-.stApp > header button,
-.stApp > header a,
-.stApp > header [role="button"],
-button[aria-label="Share"],
-button[aria-label="Favorite"],
-button[aria-label="Edit"],
-button[aria-label="Fork"],
-button[aria-label="Open in GitHub"],
-button[aria-label="GitHub"],
-button[aria-label="More"],
-button[aria-label="Menu"],
-button[title="Share"],
-button[title="Favorite"],
-button[title="Edit"],
-button[title="Fork"],
-button[title*="GitHub"],
-button[title*="menu" i],
-button[title*="more" i] {
+/* Keep the header container visible: collapsed sidebar control is mounted there. */
+header[data-testid="stHeader"],
+[data-testid="stHeader"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: 2.875rem !important;
+  min-height: 2.875rem !important;
+  max-height: 2.875rem !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  pointer-events: none !important;
+  overflow: visible !important;
+  z-index: 999999 !important;
+}
+
+/* The collapsed-sidebar control must remain visible and clickable. */
+[data-testid="collapsedControl"],
+button[data-testid="collapsedControl"],
+header[data-testid="stHeader"] [data-testid="collapsedControl"],
+[data-testid="stHeader"] [data-testid="collapsedControl"],
+button[aria-label*="sidebar" i],
+button[title*="sidebar" i],
+button[aria-label*="navigation" i],
+button[title*="navigation" i] {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  z-index: 1000000 !important;
+}
+
+/* Hide only known header actions. Do not target all header buttons. */
+header[data-testid="stHeader"] button[aria-label="Share"],
+header[data-testid="stHeader"] button[aria-label="Favorite"],
+header[data-testid="stHeader"] button[aria-label="Edit"],
+header[data-testid="stHeader"] button[aria-label="Fork"],
+header[data-testid="stHeader"] button[aria-label="Open in GitHub"],
+header[data-testid="stHeader"] button[aria-label="GitHub"],
+header[data-testid="stHeader"] button[aria-label="More"],
+header[data-testid="stHeader"] button[aria-label="Menu"],
+header[data-testid="stHeader"] button[title="Share"],
+header[data-testid="stHeader"] button[title="Favorite"],
+header[data-testid="stHeader"] button[title="Edit"],
+header[data-testid="stHeader"] button[title="Fork"],
+header[data-testid="stHeader"] button[title*="GitHub"],
+header[data-testid="stHeader"] button[title*="menu" i],
+header[data-testid="stHeader"] button[title*="more" i] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
-/* Defensive fallback: hide fixed Streamlit-only controls in the top-right corner. */
-.stApp > div[style*="position: fixed"][style*="top: 0"],
-.stApp > div[style*="position: fixed"][style*="top:0"],
-.stApp > div[style*="position: absolute"][style*="top: 0"][style*="right"],
-.stApp > div[style*="position: absolute"][style*="top:0"][style*="right"] {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
+/* Preserve sidebar structural containers. */
+section[data-testid="stSidebar"],
+[data-testid="stSidebar"],
+[data-testid="stSidebar"] > div,
+[data-testid="stSidebarContent"] {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
+
 
 </style>
 """
