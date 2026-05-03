@@ -1593,6 +1593,36 @@ div[class*="st-key-ahp_choice_"] div[data-testid="stButton"] button span {
   color: var(--text-body) !important;
 }
 
+
+
+/* --- Hide Streamlit Cloud toolbar / share controls ------------
+   Removes top-right Streamlit chrome buttons from public deployment. */
+#MainMenu,
+footer,
+div[data-testid="stToolbar"],
+[data-testid="stToolbar"],
+div[data-testid="stDecoration"],
+[data-testid="stDecoration"],
+div[data-testid="stStatusWidget"],
+[data-testid="stStatusWidget"],
+header[data-testid="stHeader"] div[data-testid="stToolbar"],
+header[data-testid="stHeader"] div[data-testid="stDecoration"],
+header[data-testid="stHeader"] div[data-testid="stStatusWidget"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Fallback for Streamlit Cloud header icon buttons. */
+header[data-testid="stHeader"] button[kind="header"],
+header[data-testid="stHeader"] button[data-testid^="baseButton-header"],
+header[data-testid="stHeader"] [data-testid^="baseButton-header"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 </style>
 """
 
