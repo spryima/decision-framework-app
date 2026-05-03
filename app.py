@@ -573,8 +573,8 @@ html, body, [data-testid="stAppViewContainer"], .stApp {
   font-size: 17px !important;
 }
 .block-container {
-  max-width: 1320px !important;
-  padding: 3.5rem 2.5rem 4rem 2.5rem !important;
+  max-width: 1640px !important;
+  padding: 3.25rem 2rem 4rem 2rem !important;
 }
 @media (max-width: 820px) {
   .block-container { padding: 2.5rem 1rem 3rem 1rem !important; }
@@ -741,19 +741,19 @@ div[data-testid="stRadio"] label[data-testid="stWidgetLabel"] { display: none !i
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] {
   display: grid !important;
   grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-  gap: 10px !important; width: 100% !important;
+  gap: 14px !important; width: 100% !important;
   margin: 10px 0 0 0 !important; overflow: visible !important;
   align-items: stretch !important;
 }
 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label {
   position: relative !important;
-  min-height: 170px !important;
-  height: 100% !important;
+  min-height: 142px !important;
+  height: auto !important;
   align-self: stretch !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--radius-lg) !important;
-  padding: 18px 16px 16px 20px !important;
+  padding: 16px 18px 16px 22px !important;
   background: var(--surface) !important;
   display: flex !important; align-items: flex-start !important;
   justify-content: flex-start !important; text-align: left !important;
@@ -801,12 +801,12 @@ div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label p,
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label div[data-testid="stMarkdownContainer"] p {
   margin: 0 !important; padding-right: 20px !important;
-  font-size: 15px !important; line-height: 1.42 !important;
+  font-size: 14.5px !important; line-height: 1.36 !important;
   font-weight: 500 !important; color: var(--text-body) !important;
   white-space: normal !important; word-break: normal !important; overflow-wrap: break-word !important;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1080px) {
   div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
 }
 @media (max-width: 780px) {
