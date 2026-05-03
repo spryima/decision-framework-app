@@ -574,7 +574,7 @@ html, body, [data-testid="stAppViewContainer"], .stApp {
 }
 .block-container {
   max-width: 1320px !important;
-  padding: 3.25rem 2rem 4rem 2rem !important;
+  padding: 3.5rem 2.5rem 4rem 2.5rem !important;
 }
 @media (max-width: 820px) {
   .block-container { padding: 2.5rem 1rem 3rem 1rem !important; }
@@ -740,20 +740,20 @@ div[data-testid="stRadio"] label[data-testid="stWidgetLabel"] { display: none !i
 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] {
   display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 14px !important; width: 100% !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 10px !important; width: 100% !important;
   margin: 10px 0 0 0 !important; overflow: visible !important;
   align-items: stretch !important;
 }
 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label {
   position: relative !important;
-  min-height: 118px !important;
-  height: auto !important;
+  min-height: 170px !important;
+  height: 100% !important;
   align-self: stretch !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--radius-lg) !important;
-  padding: 16px 18px 16px 22px !important;
+  padding: 18px 16px 16px 20px !important;
   background: var(--surface) !important;
   display: flex !important; align-items: flex-start !important;
   justify-content: flex-start !important; text-align: left !important;
@@ -801,13 +801,13 @@ div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label p,
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label div[data-testid="stMarkdownContainer"] p {
   margin: 0 !important; padding-right: 20px !important;
-  font-size: 14.5px !important; line-height: 1.36 !important;
+  font-size: 15px !important; line-height: 1.42 !important;
   font-weight: 500 !important; color: var(--text-body) !important;
   white-space: normal !important; word-break: normal !important; overflow-wrap: break-word !important;
 }
 
-@media (max-width: 1080px) {
-  div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+@media (max-width: 1200px) {
+  div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
 }
 @media (max-width: 780px) {
   div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: 1fr !important; }
@@ -1603,6 +1603,8 @@ div[class*="st-key-ahp_choice_"] div[data-testid="stButton"] button span {
    Streamlit changes internal data-testid names between releases. */
 #MainMenu,
 footer,
+header[data-testid="stHeader"],
+[data-testid="stHeader"],
 div[data-testid="stToolbar"],
 [data-testid="stToolbar"],
 div[data-testid="stToolbarActions"],
@@ -1664,49 +1666,11 @@ button[title*="more" i] {
   pointer-events: none !important;
 }
 
-
-
-/* Keep Streamlit header/sidebar structural containers alive; hide only controls. */
-header[data-testid="stHeader"],
-[data-testid="stHeader"] {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  background: #0b1118 !important;
-}
-
-section[data-testid="stSidebar"],
-[data-testid="stSidebar"],
-[data-testid="stSidebar"] > div,
-[data-testid="stSidebarContent"] {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-section[data-testid="stSidebar"],
-[data-testid="stSidebar"] {
-  min-width: 280px !important;
-  width: 280px !important;
-  max-width: 280px !important;
-  transform: none !important;
-}
-@media (max-width: 820px) {
-  section[data-testid="stSidebar"],
-  [data-testid="stSidebar"] {
-    min-width: 0 !important;
-    width: auto !important;
-    max-width: none !important;
-  }
-}
-
-/* Additional safe selectors for top-right Cloud controls without touching sidebar containers. */
-header[data-testid="stHeader"] [data-testid="stToolbar"],
-header[data-testid="stHeader"] [data-testid="stToolbarActions"],
-header[data-testid="stHeader"] [data-testid="stHeaderActionElements"],
-header[data-testid="stHeader"] [data-testid="stStatusWidget"],
-header[data-testid="stHeader"] [class*="stToolbar"],
-header[data-testid="stHeader"] [class*="stStatusWidget"] {
+/* Defensive fallback: hide fixed Streamlit-only controls in the top-right corner. */
+.stApp > div[style*="position: fixed"][style*="top: 0"],
+.stApp > div[style*="position: fixed"][style*="top:0"],
+.stApp > div[style*="position: absolute"][style*="top: 0"][style*="right"],
+.stApp > div[style*="position: absolute"][style*="top:0"][style*="right"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
