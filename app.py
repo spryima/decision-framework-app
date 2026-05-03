@@ -740,16 +740,16 @@ div[data-testid="stRadio"] label[data-testid="stWidgetLabel"] { display: none !i
 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] {
   display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 14px !important; width: 100% !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 10px !important; width: 100% !important;
   margin: 10px 0 0 0 !important; overflow: visible !important;
   align-items: stretch !important;
 }
 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label {
   position: relative !important;
-  min-height: 118px !important;
-  height: auto !important;
+  min-height: 170px !important;
+  height: 100% !important;
   align-self: stretch !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--radius-lg) !important;
@@ -806,8 +806,8 @@ div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label 
   white-space: normal !important; word-break: normal !important; overflow-wrap: break-word !important;
 }
 
-@media (max-width: 1080px) {
-  div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+@media (max-width: 1200px) {
+  div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
 }
 @media (max-width: 780px) {
   div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: 1fr !important; }
