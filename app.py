@@ -1350,6 +1350,249 @@ div[data-testid="stHorizontalBlock"]:has(.st-key-ahp_result_sticky) {
 /* misc */
 .df-step { color: var(--accent); font-weight: 700; letter-spacing: 0.02em; text-transform: uppercase; font-size: 13px; }
 hr { margin: 1rem 0; border-color: var(--border); }
+
+
+/* ============================================================
+   DEPLOY THEME HARDENING — force full light UI on Streamlit Cloud
+   Must stay at the end of the main CSS block to override Streamlit
+   dark-theme tokens and broad text rules.
+   ============================================================ */
+html,
+body,
+.stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stMain"],
+[data-testid="stMainBlockContainer"],
+section.main,
+main {
+  background: var(--bg) !important;
+  color: var(--text-body) !important;
+}
+
+[data-testid="stHeader"] {
+  background: #0b1118 !important;
+}
+
+[data-testid="stSidebar"],
+[data-testid="stSidebar"] > div,
+[data-testid="stSidebarContent"] {
+  background: #f8fafc !important;
+  color: var(--text-body) !important;
+}
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] div[data-testid="stMarkdownContainer"],
+[data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] p {
+  color: var(--text-body) !important;
+}
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+  color: var(--text-main) !important;
+}
+[data-testid="stSidebar"] hr {
+  border-color: var(--border) !important;
+}
+
+/* Native Streamlit buttons: parent + all internal markdown wrappers. */
+div[data-testid="stButton"] button,
+div[data-testid="stFormSubmitButton"] button,
+div[data-testid="stDownloadButton"] button,
+button[data-testid^="stBaseButton"] {
+  background: var(--surface) !important;
+  border: 1px solid var(--border-strong) !important;
+  color: var(--accent) !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
+}
+div[data-testid="stButton"] button *,
+div[data-testid="stFormSubmitButton"] button *,
+div[data-testid="stDownloadButton"] button *,
+button[data-testid^="stBaseButton"] *,
+div[data-testid="stButton"] button p,
+div[data-testid="stFormSubmitButton"] button p,
+div[data-testid="stDownloadButton"] button p,
+button[data-testid^="stBaseButton"] p {
+  color: inherit !important;
+}
+div[data-testid="stButton"] button:hover,
+div[data-testid="stFormSubmitButton"] button:hover,
+div[data-testid="stDownloadButton"] button:hover,
+button[data-testid^="stBaseButton"]:hover {
+  background: #f3f7fc !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+div[data-testid="stButton"] button[kind="primary"],
+div[data-testid="stFormSubmitButton"] button[kind="primary"],
+div[data-testid="stDownloadButton"] button[kind="primary"],
+button[data-testid="stBaseButton-primary"],
+button[data-testid^="stBaseButton-primary"] {
+  background: #2f506f !important;
+  border-color: #2f506f !important;
+  color: #ffffff !important;
+}
+div[data-testid="stButton"] button[kind="primary"] *,
+div[data-testid="stFormSubmitButton"] button[kind="primary"] *,
+div[data-testid="stDownloadButton"] button[kind="primary"] *,
+button[data-testid="stBaseButton-primary"] *,
+button[data-testid^="stBaseButton-primary"] * {
+  color: #ffffff !important;
+}
+div[data-testid="stButton"] button[kind="primary"]:hover,
+div[data-testid="stFormSubmitButton"] button[kind="primary"]:hover,
+div[data-testid="stDownloadButton"] button[kind="primary"]:hover,
+button[data-testid="stBaseButton-primary"]:hover,
+button[data-testid^="stBaseButton-primary"]:hover {
+  background: #243f5d !important;
+  border-color: #243f5d !important;
+  color: #ffffff !important;
+}
+div[data-testid="stButton"] button:disabled,
+div[data-testid="stButton"] button[disabled],
+div[data-testid="stButton"] button[aria-disabled="true"],
+div[data-testid="stFormSubmitButton"] button:disabled,
+div[data-testid="stFormSubmitButton"] button[disabled],
+div[data-testid="stFormSubmitButton"] button[aria-disabled="true"],
+button[data-testid^="stBaseButton"]:disabled,
+button[data-testid^="stBaseButton"][disabled],
+button[data-testid^="stBaseButton"][aria-disabled="true"] {
+  background: #e5e7eb !important;
+  border-color: #e5e7eb !important;
+  color: #64748b !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+}
+div[data-testid="stButton"] button:disabled *,
+div[data-testid="stButton"] button[disabled] *,
+div[data-testid="stButton"] button[aria-disabled="true"] *,
+div[data-testid="stFormSubmitButton"] button:disabled *,
+div[data-testid="stFormSubmitButton"] button[disabled] *,
+div[data-testid="stFormSubmitButton"] button[aria-disabled="true"] *,
+button[data-testid^="stBaseButton"]:disabled *,
+button[data-testid^="stBaseButton"][disabled] *,
+button[data-testid^="stBaseButton"][aria-disabled="true"] * {
+  color: #64748b !important;
+}
+
+/* Sidebar navigation buttons need separate contrast rules. */
+[data-testid="stSidebar"] div[data-testid="stButton"] button {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: var(--accent) !important;
+}
+[data-testid="stSidebar"] div[data-testid="stButton"] button *,
+[data-testid="stSidebar"] div[data-testid="stButton"] button p,
+[data-testid="stSidebar"] div[data-testid="stButton"] button span {
+  color: var(--accent) !important;
+}
+[data-testid="stSidebar"] div[data-testid="stButton"] button:hover {
+  background: #eef6ff !important;
+  border-color: var(--accent) !important;
+}
+
+/* Radio cards / expanders / tables: override inherited dark Streamlit tokens. */
+div[data-testid="stRadio"] label,
+div[data-testid="stRadio"] label *,
+div[data-testid="stRadio"] label p,
+div[data-testid="stCheckbox"] label,
+div[data-testid="stCheckbox"] label *,
+div[data-testid="stCheckbox"] label p,
+div[data-testid="stExpander"] *,
+div[data-testid="stDataFrame"] *,
+table,
+table * {
+  color: var(--text-body) !important;
+}
+div[data-testid="stRadio"] label p:first-of-type,
+div[data-testid="stExpander"] details summary,
+div[data-testid="stExpander"] details summary *,
+th,
+th * {
+  color: var(--text-main) !important;
+}
+.df-review-table th,
+.df-review-table th * {
+  color: #ffffff !important;
+}
+.df-review-table td,
+.df-review-table td * {
+  color: var(--text-body) !important;
+}
+.df-review-table td:first-child,
+.df-review-table td:first-child * {
+  color: var(--text-main) !important;
+}
+
+/* Custom HTML cards must not be affected by dark parent containers. */
+.df-card,
+.df-intro-card,
+.df-outcome-card,
+.df-stepper-card,
+.df-prem-domain-card,
+.df-domain-card-compact,
+.df-dashboard-kpi,
+.df-recommendation-panel,
+.df-risk-status-bar,
+.df-review-table,
+.df-score-table,
+.df-domain-table,
+.df-governance-table {
+  color: var(--text-body) !important;
+}
+.df-card *,
+.df-intro-card *,
+.df-outcome-card *,
+.df-stepper-card *,
+.df-prem-domain-card *,
+.df-domain-card-compact *,
+.df-dashboard-kpi *,
+.df-recommendation-panel *,
+.df-risk-status-bar *,
+.df-review-table *,
+.df-score-table *,
+.df-domain-table *,
+.df-governance-table * {
+  color: inherit;
+}
+.df-prem-title,
+.df-prem-title *,
+.df-intro-card h3,
+.df-outcome-title,
+.df-stepper-title,
+.df-domain-card-compact .score,
+.df-dashboard-kpi .kpi-value,
+.df-recommendation-title,
+.df-risk-status-main,
+.df-stepper-label,
+.df-outcome-chip,
+.df-domain-desc-title {
+  color: var(--text-main) !important;
+}
+.df-prem-meta,
+.df-prem-domain-subtitle,
+.df-intro-card p,
+.df-intro-card li,
+.df-dashboard-kpi .kpi-note,
+.df-recommendation-body,
+.df-domain-card-compact .body,
+.df-stepper-label {
+  color: var(--text-body) !important;
+}
+
+/* AHP choice buttons have their own forced readability. */
+div[class*="st-key-ahp_choice_"] div[data-testid="stButton"] button,
+div[class*="st-key-ahp_choice_"] div[data-testid="stButton"] button *,
+div[class*="st-key-ahp_choice_"] div[data-testid="stButton"] button p,
+div[class*="st-key-ahp_choice_"] div[data-testid="stButton"] button span {
+  background: var(--surface) !important;
+  color: var(--text-body) !important;
+}
+
 </style>
 """
 
