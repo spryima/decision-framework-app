@@ -574,7 +574,7 @@ html, body, [data-testid="stAppViewContainer"], .stApp {
 }
 .block-container {
   max-width: 1320px !important;
-  padding: 3.5rem 2.5rem 4rem 2.5rem !important;
+  padding: 3.25rem 2rem 4rem 2rem !important;
 }
 @media (max-width: 820px) {
   .block-container { padding: 2.5rem 1rem 3rem 1rem !important; }
@@ -740,20 +740,20 @@ div[data-testid="stRadio"] label[data-testid="stWidgetLabel"] { display: none !i
 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] {
   display: grid !important;
-  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
-  gap: 10px !important; width: 100% !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important; width: 100% !important;
   margin: 10px 0 0 0 !important; overflow: visible !important;
   align-items: stretch !important;
 }
 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label {
   position: relative !important;
-  min-height: 170px !important;
-  height: 100% !important;
+  min-height: 118px !important;
+  height: auto !important;
   align-self: stretch !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--radius-lg) !important;
-  padding: 18px 16px 16px 20px !important;
+  padding: 16px 18px 16px 22px !important;
   background: var(--surface) !important;
   display: flex !important; align-items: flex-start !important;
   justify-content: flex-start !important; text-align: left !important;
@@ -801,13 +801,13 @@ div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label 
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label p,
 div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label div[data-testid="stMarkdownContainer"] p {
   margin: 0 !important; padding-right: 20px !important;
-  font-size: 15px !important; line-height: 1.42 !important;
+  font-size: 14.5px !important; line-height: 1.36 !important;
   font-weight: 500 !important; color: var(--text-body) !important;
   white-space: normal !important; word-break: normal !important; overflow-wrap: break-word !important;
 }
 
-@media (max-width: 1200px) {
-  div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+@media (max-width: 1080px) {
+  div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
 }
 @media (max-width: 780px) {
   div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] { grid-template-columns: 1fr !important; }
@@ -1597,85 +1597,83 @@ div[class*="st-key-ahp_choice_"] div[data-testid="stButton"] button span {
 
 
 
-/* --- Hard-hide Streamlit Cloud chrome / top-right controls --------
-   Hides the Share/star/GitHub/edit/menu square buttons rendered by
-   Streamlit Cloud. The selectors are intentionally redundant because
-   Streamlit changes internal data-testid names between releases. */
+/* --- Streamlit chrome handling: conservative sidebar-safe mode --------
+   Do not hide the Streamlit header or toolbar. The sidebar collapse/reopen
+   control is rendered inside Streamlit chrome, and aggressive hiding breaks it.
+   This block only normalizes colors and forces sidebar containers to stay visible. */
+
 #MainMenu,
-footer,
+footer {
+  visibility: hidden !important;
+}
+
 header[data-testid="stHeader"],
-[data-testid="stHeader"],
-div[data-testid="stToolbar"],
+[data-testid="stHeader"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  pointer-events: auto !important;
+  z-index: 999999 !important;
+}
+
 [data-testid="stToolbar"],
-div[data-testid="stToolbarActions"],
-[data-testid="stToolbarActions"],
-div[data-testid="stHeaderActionElements"],
+[data-testid="stToolbar"] *,
 [data-testid="stHeaderActionElements"],
-div[data-testid="stDecoration"],
-[data-testid="stDecoration"],
-div[data-testid="stStatusWidget"],
-[data-testid="stStatusWidget"],
-div[data-testid="stAppDeployButton"],
-[data-testid="stAppDeployButton"],
-div[data-testid="stDeployButton"],
-[data-testid="stDeployButton"],
-[data-testid="stConnectionStatus"],
-[data-testid="stActionButton"],
-[class*="stToolbar"],
-[class*="stStatusWidget"],
-[class*="stAppDeployButton"],
-[class*="viewerBadge"],
-[class*="deployButton"] {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  width: 0 !important;
-  height: 0 !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  pointer-events: none !important;
+[data-testid="stHeaderActionElements"] *,
+[data-testid="collapsedControl"],
+[data-testid="collapsedControl"] * {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
-/* Remove any remaining header buttons if Streamlit renders them without testids. */
-header button,
-header a,
-header [role="button"],
-.stApp > header button,
-.stApp > header a,
-.stApp > header [role="button"],
-button[aria-label="Share"],
-button[aria-label="Favorite"],
-button[aria-label="Edit"],
-button[aria-label="Fork"],
-button[aria-label="Open in GitHub"],
-button[aria-label="GitHub"],
-button[aria-label="More"],
-button[aria-label="Menu"],
-button[title="Share"],
-button[title="Favorite"],
-button[title="Edit"],
-button[title="Fork"],
-button[title*="GitHub"],
-button[title*="menu" i],
-button[title*="more" i] {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
+[data-testid="collapsedControl"],
+button[data-testid="collapsedControl"],
+button[aria-label*="sidebar" i],
+button[title*="sidebar" i],
+button[aria-label*="navigation" i],
+button[title*="navigation" i] {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  z-index: 1000000 !important;
 }
 
-/* Defensive fallback: hide fixed Streamlit-only controls in the top-right corner. */
-.stApp > div[style*="position: fixed"][style*="top: 0"],
-.stApp > div[style*="position: fixed"][style*="top:0"],
-.stApp > div[style*="position: absolute"][style*="top: 0"][style*="right"],
-.stApp > div[style*="position: absolute"][style*="top:0"][style*="right"] {
-  display: none !important;
-  visibility: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
+section[data-testid="stSidebar"],
+[data-testid="stSidebar"],
+[data-testid="stSidebar"] > div,
+[data-testid="stSidebarContent"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  background: #f8fafc !important;
+  color: var(--text-body) !important;
 }
+
+/* Keep Streamlit Cloud top-right controls usable but visually quiet. */
+[data-testid="stToolbar"] button,
+[data-testid="stHeaderActionElements"] button,
+header[data-testid="stHeader"] button {
+  background: rgba(255,255,255,0.92) !important;
+  color: var(--accent) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 9px !important;
+  box-shadow: none !important;
+}
+
+[data-testid="stToolbar"] svg,
+[data-testid="stHeaderActionElements"] svg,
+header[data-testid="stHeader"] svg {
+  color: var(--accent) !important;
+  fill: var(--accent) !important;
+}
+
 
 </style>
 """
