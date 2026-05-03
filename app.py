@@ -1595,34 +1595,88 @@ div[class*="st-key-ahp_choice_"] div[data-testid="stButton"] button span {
 
 
 
-/* --- Hide Streamlit Cloud toolbar / share controls ------------
-   Removes top-right Streamlit chrome buttons from public deployment. */
+
+
+/* --- Hard-hide Streamlit Cloud chrome / top-right controls --------
+   Hides the Share/star/GitHub/edit/menu square buttons rendered by
+   Streamlit Cloud. The selectors are intentionally redundant because
+   Streamlit changes internal data-testid names between releases. */
 #MainMenu,
 footer,
+header[data-testid="stHeader"],
+[data-testid="stHeader"],
 div[data-testid="stToolbar"],
 [data-testid="stToolbar"],
+div[data-testid="stToolbarActions"],
+[data-testid="stToolbarActions"],
+div[data-testid="stHeaderActionElements"],
+[data-testid="stHeaderActionElements"],
 div[data-testid="stDecoration"],
 [data-testid="stDecoration"],
 div[data-testid="stStatusWidget"],
 [data-testid="stStatusWidget"],
-header[data-testid="stHeader"] div[data-testid="stToolbar"],
-header[data-testid="stHeader"] div[data-testid="stDecoration"],
-header[data-testid="stHeader"] div[data-testid="stStatusWidget"] {
+div[data-testid="stAppDeployButton"],
+[data-testid="stAppDeployButton"],
+div[data-testid="stDeployButton"],
+[data-testid="stDeployButton"],
+[data-testid="stConnectionStatus"],
+[data-testid="stActionButton"],
+[class*="stToolbar"],
+[class*="stStatusWidget"],
+[class*="stAppDeployButton"],
+[class*="viewerBadge"],
+[class*="deployButton"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Remove any remaining header buttons if Streamlit renders them without testids. */
+header button,
+header a,
+header [role="button"],
+.stApp > header button,
+.stApp > header a,
+.stApp > header [role="button"],
+button[aria-label="Share"],
+button[aria-label="Favorite"],
+button[aria-label="Edit"],
+button[aria-label="Fork"],
+button[aria-label="Open in GitHub"],
+button[aria-label="GitHub"],
+button[aria-label="More"],
+button[aria-label="Menu"],
+button[title="Share"],
+button[title="Favorite"],
+button[title="Edit"],
+button[title="Fork"],
+button[title*="GitHub"],
+button[title*="menu" i],
+button[title*="more" i] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
-/* Fallback for Streamlit Cloud header icon buttons. */
-header[data-testid="stHeader"] button[kind="header"],
-header[data-testid="stHeader"] button[data-testid^="baseButton-header"],
-header[data-testid="stHeader"] [data-testid^="baseButton-header"] {
+/* Defensive fallback: hide fixed Streamlit-only controls in the top-right corner. */
+.stApp > div[style*="position: fixed"][style*="top: 0"],
+.stApp > div[style*="position: fixed"][style*="top:0"],
+.stApp > div[style*="position: absolute"][style*="top: 0"][style*="right"],
+.stApp > div[style*="position: absolute"][style*="top:0"][style*="right"] {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
 </style>
 """
 
