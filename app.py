@@ -353,7 +353,7 @@ CRITERIA = [
         "default": None,
         "what": "Наскільки реалістично та ймовірно, що цей напрям, актив або можливість досягне цільової фінансової віддачі у базовому сценарії, спираючись на якість моделі доходу та перевіреність припущень.",
         "anchors": {
-            "10": "Висока ймовірність досягти або перевищити цільову дохідність; фінансова логіка підтверджена фактами, припущення перевірені.",
+            "10": "Висока ймовірність досягти або перевищити цільову дохідність; базовий сценарій сильний, фінансова логіка підтверджена фактами, припущення перевірені.",
             "7": "Дохідність виглядає реалістичною; є кілька залежностей або невідомих змінних, але вони зрозумілі й керовані.",
             "5": "Прийнятна дохідність можлива, але не гарантована; результат сильно залежить від 1–2 ключових припущень.",
             "3": "Цільова дохідність більше схожа на optimistic case; базовий сценарій слабкий, нестабільний або недостатньо підтверджений.",
@@ -368,7 +368,7 @@ CRITERIA = [
         "type": "scale",
         "default": 5.0,
         "what": "Передбачуваність, повторюваність, волатильність і видимість грошового потоку.",
-        "anchors": {"10": "Стабільний, повторюваний, добре прогнозований cash flow; мало сюрпризів.", "7": "Загалом хороший, але є циклічність або кілька слабких місць.", "5": "Гроші є, але вони нерівні, погано видимі або сильно залежать від ручного управління.", "3": "Cash flow нервовий, рваний, із частими касовими провалами.", "0": "Майже немає довіри до потоку грошей."},
+        "anchors": {"10": "Стабільний, повторюваний, добре прогнозований cash flow; короткий cash conversion cycle; мало сюрпризів.", "7": "Загалом хороший, але є циклічність або кілька слабких місць.", "5": "Гроші є, але вони нерівні, погано видимі або сильно залежать від ручного управління.", "3": "Cash flow нервовий, рваний, із частими касовими провалами.", "0": "Майже немає довіри до потоку грошей."},
         "evidence": "Якість грошей: повторюваність, видимість, волатильність, цикл конвертації в cash flow.",
     },
     {
@@ -398,7 +398,7 @@ CRITERIA = [
         "type": "scale",
         "default": 5.0,
         "what": "Чи відкриває доступ до ринків, клієнтів, партнерів, знань або можливостей, які інакше були б недоступні?",
-        "anchors": {"10": "Відкриває багато сильних траєкторій на 12–36 міс.: нові ринки, ролі, партнерства,  сценарії", "7": "Відкриває кілька реальних наступних ходів.", "5": "Дає обмежену, але корисну майбутню гнучкість.", "3": "Майже не створює нових ходів або створює слабкі опції.", "0": "Фіксує в жорсткій траєкторії, звужує маневр."},
+        "anchors": {"10": "Відкриває багато сильних траєкторій на 12–36 міс.: нові ринки, ролі, партнерства, deal flow, сценарії pivot.", "7": "Відкриває кілька реальних наступних ходів.", "5": "Дає обмежену, але корисну майбутню гнучкість.", "3": "Майже не створює нових ходів або створює слабкі опції.", "0": "Фіксує в жорсткій траєкторії, звужує маневр."},
         "evidence": "Конкретні майбутні сценарії, право без зобов’язання, нові ринки, deal flow, опції pivot.",
     },
     {
@@ -578,6 +578,57 @@ html, body, [data-testid="stAppViewContainer"], .stApp {
 }
 @media (max-width: 820px) {
   .block-container { padding: 2.5rem 1rem 3rem 1rem !important; }
+}
+
+
+/* --- Force readable light theme on deployed Streamlit --------
+   Streamlit Cloud may inherit dark theme tokens from user/browser settings.
+   The app uses a custom light design system, so native Streamlit text must be
+   explicitly reset to dark colors on light surfaces. */
+.stApp,
+.stApp p,
+.stApp li,
+.stApp label,
+.stApp span,
+.stApp div[data-testid="stMarkdownContainer"],
+.stApp div[data-testid="stMarkdownContainer"] p {
+  color: var(--text-body) !important;
+}
+.stApp h1,
+.stApp h2,
+.stApp h3,
+.stApp h4,
+.stApp h5,
+.stApp h6,
+.stApp div[data-testid="stMarkdownContainer"] h1,
+.stApp div[data-testid="stMarkdownContainer"] h2,
+.stApp div[data-testid="stMarkdownContainer"] h3,
+.stApp div[data-testid="stMarkdownContainer"] h4,
+.stApp div[data-testid="stMarkdownContainer"] h5,
+.stApp div[data-testid="stMarkdownContainer"] h6 {
+  color: var(--text-main) !important;
+}
+div[data-testid="stExpander"] details {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+div[data-testid="stExpander"] details summary,
+div[data-testid="stExpander"] details summary * {
+  color: var(--text-main) !important;
+  font-weight: 680 !important;
+}
+div[data-testid="stExpander"] div[data-testid="stExpanderDetails"] {
+  background: var(--surface) !important;
+  color: var(--text-body) !important;
+}
+div[data-testid="stExpander"] div[data-testid="stExpanderDetails"] p,
+div[data-testid="stExpander"] div[data-testid="stExpanderDetails"] label,
+div[data-testid="stExpander"] div[data-testid="stExpanderDetails"] label p,
+div[data-testid="stCheckbox"] label,
+div[data-testid="stCheckbox"] label p {
+  color: var(--text-body) !important;
 }
 
 /* --- Generic cards ---------------------------------------- */
@@ -1143,8 +1194,8 @@ div[data-testid="stHorizontalBlock"]:has(.st-key-ahp_result_sticky) {
 .df-risk-badge.behavior { background: #eef6ff; border-color: #bfdbfe; color: #1d4ed8; }
 .df-review-table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 12px 0 20px 0; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--surface); }
 .df-review-table th { background: var(--text-main); color: white; text-align: left; padding: 11px 14px; font-size: 15px; font-weight: 680; }
-.df-review-table td { border-top: 1px solid var(--border); padding: 11px 14px; vertical-align: top; line-height: 1.4; font-size: 15px; }
-.df-review-table td:first-child { font-weight: 700; white-space: nowrap; }
+.df-review-table td { border-top: 1px solid var(--border); padding: 11px 14px; vertical-align: top; line-height: 1.4; font-size: 15px; color: var(--text-body); background: var(--surface); }
+.df-review-table td:first-child { font-weight: 700; white-space: nowrap; color: var(--text-main); }
 @media (max-width: 760px) {
   .df-risk-status-bar { align-items: flex-start; flex-direction: column; }
   .df-risk-status-meta { text-align: left; }
