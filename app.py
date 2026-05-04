@@ -1700,7 +1700,7 @@ header[data-testid="stHeader"] svg {
 def init_state() -> None:
     """Initialize Streamlit session state with stable defaults."""
     defaults = {
-        "current_step": "welcome",
+        "current_step": PAGE_WELCOME,
         "mcda_index": 0,
         "case_data": {
             "title": "",
@@ -1826,22 +1826,26 @@ def clamp01(value: float) -> float:
 
 
 def pair_option_index(value: float) -> int:
+    """Return the index in PAIRWISE_OPTIONS closest to the given numeric value."""
     values = [v for _, v in PAIRWISE_OPTIONS]
     return min(range(len(values)), key=lambda i: abs(values[i] - float(value)))
 
 
-def pair_option_label(left: str, right: str, label: str) -> str:
+def pair_option_label(label: str) -> str:
+    """Return the display label for an AHP pairwise comparison option key."""
     # Internal labels are intentionally short in the UI; direction is shown by position.
     return AHP_OPTION_LABELS.get(label, str(label))
 
 
 def radio_index_from_value(options: Sequence[Any], value: Any) -> int | None:
+    """Return the index of value in options, or None if not found."""
     if value is None or value not in options:
         return None
     return options.index(value)
 
 
 def basket_option_label(bkey: str) -> str:
+    """Return the radio label for a portfolio basket key (used in st.radio format_func)."""
     cfg = BASKET_CONFIG[bkey]
     return cfg["label"] + "\n\n" + cfg["description"]
 
@@ -2017,7 +2021,7 @@ def set_ahp_pair_answer(pid: str, option_idx: int) -> None:
 
 def sync_ahp_answer_from_widget(pid: str) -> None:
     """Legacy no-op: AHP no longer reads duplicate-label radio widgets."""
-    return False
+    return None
 
 
 def sync_ahp_answers_from_widgets() -> None:
@@ -2026,6 +2030,7 @@ def sync_ahp_answers_from_widgets() -> None:
 
 
 def ahp_winner_counts() -> dict[str, int]:
+    """Return cumulative log-scale preference scores per domain from answered AHP pairs."""
     counts = {d["key"]: 0.0 for d in DOMAINS}
     for pid in ahp_answered_pairs():
         left, right = PAIR_LOOKUP[pid]
@@ -2741,7 +2746,6 @@ def page_ahp() -> None:
     with input_col:
         render_ahp_input_panel()
 
-    sync_ahp_answers_from_widgets()
     _, weights, cr, warnings = calculate_ahp()
     with result_col:
         render_ahp_result_panel(weights, cr, warnings)
@@ -2750,6 +2754,7 @@ def page_ahp() -> None:
 
 
 def page_basket() -> None:
+    """Render the portfolio basket selection step."""
     render_header()
     render_premium_page_header("Роль у портфелі", "Перш ніж оцінювати актив — визнач, яку роль він має виконувати у твоєму портфелі. Загальна шкала score однакова, але кожен кошик має власний admission threshold.", progress=36)
 
@@ -2785,6 +2790,7 @@ def page_basket() -> None:
 
 
 def render_review_protocol_table() -> None:
+    """Render the decision-size review protocol table."""
     rows = []
     for r in REVIEW_PROTOCOLS:
         rows.append(
@@ -2806,6 +2812,7 @@ def render_review_protocol_table() -> None:
 
 
 def render_veto_status_bar(vetoes: Sequence[Mapping[str, Any]]) -> None:
+    """Render the veto status summary bar at the top of the stop-factors page."""
     if vetoes:
         names = ", ".join(v["name"] for v in vetoes[:3])
         extra = f" +{len(vetoes) - 3}" if len(vetoes) > 3 else ""
@@ -2831,6 +2838,7 @@ def render_veto_status_bar(vetoes: Sequence[Mapping[str, Any]]) -> None:
 
 
 def render_veto_group(group: Mapping[str, Any]) -> None:
+    """Render one veto risk group as a collapsible section with checkboxes."""
     active_count = sum(1 for key, _ in group["items"] if st.session_state.veto_answers.get(key, False))
     title = f"{group['title']} · {active_count}/{len(group['items'])}"
     expanded = active_count > 0
@@ -3082,7 +3090,8 @@ def mcda_criterion_complete(c: Mapping[str, Any]) -> bool:
     return False
 
 
-def mcda_domain_completion(domain_criteria: Sequence[Mapping[str, Any]]) -> int:
+def mcda_domain_completion(domain_criteria: Sequence[Mapping[str, Any]]) -> tuple[int, int]:
+    """Return (completed_count, total_count) for a list of MCDA criteria."""
     completed = sum(1 for c in domain_criteria if mcda_criterion_complete(c))
     return completed, len(domain_criteria)
 
@@ -3103,7 +3112,8 @@ def mcda_status_badge(c: Mapping[str, Any]) -> str:
     return "<span class='df-prem-status missing'>Не заповнено</span>"
 
 
-def render_mcda_criterion_header(c: Mapping[str, Any]) -> None:
+def render_mcda_criterion_header(c: Mapping[str, Any]) -> str:
+    """Build the HTML header for one MCDA criterion card."""
     badge = mcda_status_badge(c)
     return f"""
     <div class='df-prem-criterion-head'>
@@ -3282,6 +3292,7 @@ def page_mcda() -> None:
 
 
 def status_visual_kind(status: str) -> str:
+    """Map a decision status string to a CSS visual kind: 'good', 'warn', or 'bad'."""
     status_text = str(status or "")
     if "EXIT" in status_text or "GATE REVIEW" in status_text:
         return "bad"
@@ -3291,6 +3302,7 @@ def status_visual_kind(status: str) -> str:
 
 
 def score_band_label(score: float) -> str:
+    """Return a short Ukrainian label for a final score band."""
     if score >= 80:
         return "сильне рішення"
     if score >= 65:
@@ -3301,6 +3313,7 @@ def score_band_label(score: float) -> str:
 
 
 def domain_interpretation(score: float) -> str:
+    """Return a short Ukrainian interpretation label for a domain score."""
     if score >= 80:
         return "сильний"
     if score >= 65:
@@ -3311,6 +3324,7 @@ def domain_interpretation(score: float) -> str:
 
 
 def safe_score(value: Any) -> float:
+    """Convert a value to float; return 0.0 on invalid or non-numeric input."""
     try:
         return float(value)
     except (TypeError, ValueError, OverflowError):
@@ -3430,9 +3444,9 @@ def score_explain_rows(domain_scores: Mapping[str, float], criterion_scores: Map
     for d in DOMAINS:
         key = d["key"]
         score = safe_score(domain_scores.get(key, 0))
-        вага = safe_score(weights.get(key, 0))
-        contribution = score * вага
-        weighted_drag = вага * (100 - score)
+        weight_val = safe_score(weights.get(key, 0))
+        contribution = score * weight_val
+        weighted_drag = weight_val * (100 - score)
         _, lowest = domain_subcriteria_rank(key, criterion_scores)
         lowest_text = "—"
         if lowest is not None:
@@ -3447,7 +3461,7 @@ def score_explain_rows(domain_scores: Mapping[str, float], criterion_scores: Map
             "key": key,
             "domain": d["label"],
             "score": score,
-            "weight": вага,
+            "weight": weight_val,
             "contribution": contribution,
             "weighted_drag": weighted_drag,
             "lowest": lowest_text,
@@ -3495,7 +3509,7 @@ def render_domain_compact_table(domain_scores: Mapping[str, float], criterion_sc
     for d in DOMAINS:
         key = d["key"]
         score = safe_score(domain_scores.get(key, 0))
-        вага = safe_score(st.session_state.ahp_weights.get(key, 0))
+        weight_val = safe_score(st.session_state.ahp_weights.get(key, 0))
         strongest, weakest = domain_subcriteria_rank(key, criterion_scores)
         strongest_text = strongest["name"] if strongest else "—"
         weakest_text = weakest["name"] if weakest else "—"
@@ -3503,7 +3517,7 @@ def render_domain_compact_table(domain_scores: Mapping[str, float], criterion_sc
             "<tr>"
             f"<td><b>{escape(d['label'])}</b><br><span class='df-muted'>{escape(domain_interpretation(score))}</span></td>"
             f"<td style='min-width:150px'><div class='df-mini-bar'><div class='df-mini-bar-fill' style='width:{max(0, min(100, score)):.1f}%;'></div></div><div class='df-muted'>{score:.1f} / 100</div></td>"
-            f"<td>{вага * 100:.1f}%</td>"
+            f"<td>{weight_val * 100:.1f}%</td>"
             f"<td><span class='df-domain-chip'>найсильніший: {escape(strongest_text)}</span><br><span class='df-domain-chip'>найнижчий: {escape(weakest_text)}</span></td>"
             "</tr>"
         )
