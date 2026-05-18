@@ -1,4 +1,5 @@
 
+import json
 import math
 from itertools import combinations
 from datetime import datetime
@@ -1692,6 +1693,143 @@ header[data-testid="stHeader"] svg {
 }
 
 
+
+/* ============================================================
+   UX REFINEMENTS — clearer flow, draft tools, basket cards, MCDA rail
+   ============================================================ */
+.df-sidebar-state {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: 12px 13px;
+  margin: 10px 0 12px 0;
+  box-shadow: var(--shadow-card);
+}
+.df-sidebar-title {
+  color: var(--text-main);
+  font-size: 15px;
+  font-weight: 760;
+  margin-bottom: 8px;
+}
+.df-sidebar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.df-sidebar-pill {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  padding: 8px 9px;
+}
+.df-sidebar-pill .label {
+  color: var(--text-muted);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: .025em;
+  font-weight: 700;
+}
+.df-sidebar-pill .value {
+  color: var(--text-main);
+  font-size: 14.5px;
+  font-weight: 760;
+  margin-top: 2px;
+}
+.df-basket-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 8px 0 18px 0;
+}
+.df-basket-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  padding: 16px 17px;
+  min-height: 172px;
+  box-shadow: var(--shadow-card);
+}
+.df-basket-card h3 {
+  color: var(--text-main);
+  font-size: 17px;
+  font-weight: 780;
+  margin: 0 0 7px 0;
+}
+.df-basket-card p {
+  color: var(--text-body);
+  font-size: 14.5px;
+  line-height: 1.42;
+  margin: 0 0 10px 0;
+}
+.df-basket-threshold {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 5px 8px;
+}
+.df-section-note {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-soft);
+  padding: 11px 13px;
+  color: var(--text-body);
+  font-size: 15px;
+  line-height: 1.45;
+  margin: 10px 0 14px 0;
+}
+.df-mcda-rail {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 18px 0;
+}
+.df-mcda-rail-item {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  padding: 9px 10px;
+  box-shadow: var(--shadow-card);
+}
+.df-mcda-rail-item.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-ring);
+}
+.df-mcda-rail-item.done {
+  border-color: var(--green-border);
+  background: var(--green-bg);
+}
+.df-mcda-rail-title {
+  color: var(--text-main);
+  font-size: 13.5px;
+  font-weight: 780;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.df-mcda-rail-meta {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 650;
+  margin-top: 3px;
+}
+.df-veto-note-caption {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: -2px 0 4px 0;
+}
+@media (max-width: 980px) {
+  .df-basket-grid { grid-template-columns: 1fr; }
+  .df-mcda-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .df-mcda-rail { grid-template-columns: 1fr; }
+  .df-sidebar-grid { grid-template-columns: 1fr; }
+}
+
 </style>
 """
 
@@ -2338,29 +2476,71 @@ def render_premium_intro_card(title: str, body: str) -> None:
 
 
 def render_sidebar() -> None:
-    st.sidebar.title("Навігація")
+    """Render sidebar navigation, decision state and draft import/export tools."""
+    st.sidebar.title("Decision Framework")
     steps = [
-        ("welcome", "Вступ"),
-        ("ahp", "AHP"),
-        ("basket", "Роль у портфелі"),
-        ("veto", "Стоп-фактори"),
-        ("mcda", "MCDA"),
-        ("dashboard", "Панель рішення"),
-        ("memo", "Мемо"),
+        (PAGE_WELCOME, "Вступ"),
+        (PAGE_AHP, "AHP-ваги"),
+        (PAGE_BASKET, "Роль активу"),
+        (PAGE_VETO, "Стоп-фактори"),
+        (PAGE_MCDA, "MCDA"),
+        (PAGE_DASHBOARD, "Панель"),
+        (PAGE_MEMO, "Мемо"),
     ]
-    for key, label in steps:
-        if st.sidebar.button(label, use_container_width=True, key=f"nav_{key}"):
-            go(key, st.session_state.mcda_index if key == "mcda" else None)
+    current = normalize_page_key(st.session_state.get("current_step", PAGE_WELCOME))
+    current_idx = next((i for i, (key, _) in enumerate(steps) if key == current), 0)
+
+    for idx, (key, label) in enumerate(steps):
+        if key == current:
+            prefix = "→"
+        elif idx < current_idx:
+            prefix = "✓"
+        else:
+            prefix = "·"
+        nav_label = f"{prefix} {idx + 1}. {label}"
+        if st.sidebar.button(nav_label, use_container_width=True, key=f"nav_{key}"):
+            go(key, st.session_state.mcda_index if key == PAGE_MCDA else None)
 
     st.sidebar.divider()
-    st.sidebar.caption("Поточний стан")
-    cr = st.session_state.get("consistency_ratio", 0.0)
-    st.sidebar.write(f"CR: **{cr:.3f}**")
+    cr = float(st.session_state.get("consistency_ratio", 0.0) or 0.0)
     basket = st.session_state.get("portfolio_basket")
-    st.sidebar.write(f"Кошик: **{BASKET_CONFIG[basket]['label'] if basket else '—'}**")
-    st.sidebar.write(f"Stop-фактори: **{len(active_vetoes())}**")
+    basket_label = BASKET_CONFIG[basket]["label"] if basket else "—"
     score = st.session_state.get("final_score")
-    st.sidebar.write(f"Score: **{format_score(score)}**")
+    completed_mcda = sum(1 for c in CRITERIA if mcda_criterion_complete(c))
+    state_html = f"""
+    <div class='df-sidebar-state'>
+      <div class='df-sidebar-title'>Поточний стан</div>
+      <div class='df-sidebar-grid'>
+        <div class='df-sidebar-pill'><div class='label'>CR</div><div class='value'>{cr:.3f}</div></div>
+        <div class='df-sidebar-pill'><div class='label'>Кошик</div><div class='value'>{escape(basket_label)}</div></div>
+        <div class='df-sidebar-pill'><div class='label'>Stop</div><div class='value'>{len(active_vetoes())}</div></div>
+        <div class='df-sidebar-pill'><div class='label'>Score</div><div class='value'>{escape(format_score(score))}</div></div>
+        <div class='df-sidebar-pill'><div class='label'>MCDA</div><div class='value'>{completed_mcda}/{len(CRITERIA)}</div></div>
+        <div class='df-sidebar-pill'><div class='label'>Memo</div><div class='value'>{'готове' if score is not None else '—'}</div></div>
+      </div>
+    </div>
+    """
+    st.sidebar.markdown(state_html, unsafe_allow_html=True)
+
+    with st.sidebar.expander("Чернетка", expanded=False):
+        draft = export_draft()
+        st.download_button(
+            "Зберегти чернетку (.json)",
+            data=json.dumps(draft, ensure_ascii=False, indent=2),
+            file_name="decision_framework_draft.json",
+            mime="application/json",
+            use_container_width=True,
+        )
+        uploaded = st.file_uploader("Відновити чернетку", type=["json"], key="draft_upload")
+        if uploaded is not None:
+            try:
+                payload = json.load(uploaded)
+                validate_draft_schema(payload)
+                import_draft(payload)
+                st.success("Чернетку відновлено.")
+                st.rerun()
+            except Exception as exc:
+                st.error(f"Не вдалося відновити чернетку: {exc}")
 
 
 def export_draft() -> dict[str, Any]:
@@ -2560,7 +2740,7 @@ def page_welcome() -> None:
     )
 
     with st.container(key="welcome_cta"):
-        if st.button("Почати дослідження", type="primary", use_container_width=True):
+        if st.button("Почати оцінку рішення", type="primary", use_container_width=True):
             reset_decision_state("ahp")
 
 def render_ahp_guide() -> None:
@@ -2748,9 +2928,34 @@ def page_ahp() -> None:
     render_ahp_navigation(cr)
 
 
+
+def render_basket_cards() -> None:
+    """Render portfolio-role cards before the basket selector."""
+    cards = []
+    for key in ["core", "growth", "opportunity"]:
+        cfg = BASKET_CONFIG[key]
+        cards.append(
+            "<div class='df-basket-card'>"
+            f"<h3>{escape(cfg['label'])}</h3>"
+            f"<p>{escape(cfg['description'])}</p>"
+            f"<span class='df-basket-threshold'>{escape(cfg.get('threshold_line', ''))}</span>"
+            "</div>"
+        )
+    st.markdown("<div class='df-basket-grid'>" + "".join(cards) + "</div>", unsafe_allow_html=True)
+
 def page_basket() -> None:
     render_header()
-    render_premium_page_header("Роль у портфелі", "Перш ніж оцінювати актив — визнач, яку роль він має виконувати у твоєму портфелі. Загальна шкала score однакова, але кожен кошик має власний admission threshold.", progress=36)
+    render_premium_page_header(
+        "Роль у портфелі",
+        "Вибери, яку роботу має виконувати актив. Від цього залежать пороги INVEST / HOLD / REFACTOR / EXIT.",
+        progress=36,
+        completion="крок 2 / 6",
+    )
+    render_basket_cards()
+    st.markdown(
+        "<div class='df-section-note'><b>Правило:</b> спершу роль активу, потім оцінка. Не змішуй стабільний core-актив, growth-ставку й opportunity-експеримент в одну логіку.</div>",
+        unsafe_allow_html=True,
+    )
 
     basket_keys = ["core", "growth", "opportunity"]
     current = st.session_state.get("portfolio_basket")
@@ -2758,11 +2963,10 @@ def page_basket() -> None:
 
     with st.form("basket_form"):
         selected = st.radio(
-            "Portfolio role",
+            "Оберіть роль активу",
             basket_keys,
             index=index,
             format_func=basket_option_label,
-            label_visibility="collapsed",
             horizontal=True,
         )
 
@@ -2773,14 +2977,14 @@ def page_basket() -> None:
             cont = st.form_submit_button("Продовжити до стоп-факторів", type="primary", use_container_width=True)
 
     if back:
-        go("ahp")
+        go(PAGE_AHP)
     if cont and selected is not None:
         st.session_state.portfolio_basket = selected
-        go("veto")
+        go(PAGE_VETO)
 
     if current:
         cfg = BASKET_CONFIG[current]
-        st.success(f"Поточний кошик: **{cfg['label']}**.")
+        st.success(f"Поточний кошик: **{cfg['label']}** · {cfg.get('threshold_line', '')}")
 
 
 def render_review_protocol_table() -> None:
@@ -2857,13 +3061,31 @@ def render_veto_group(group: Mapping[str, Any]) -> None:
                 label = VETO_SEVERITY_LABELS.get(severity, severity)
                 st.markdown(f"<span class='df-risk-badge {cls}'>{escape(label)}</span>", unsafe_allow_html=True)
 
+            if checked:
+                st.markdown("<div class='df-veto-note-caption'>Evidence / коротка причина активації стоп-фактора</div>", unsafe_allow_html=True)
+                note_value = st.text_area(
+                    f"Нотатка до стоп-фактора: {item['name']}",
+                    value=st.session_state.veto_notes.get(item["key"], ""),
+                    key=f"veto_note_{item['key']}",
+                    height=72,
+                    label_visibility="collapsed",
+                    placeholder="Що саме створює ризик? Який факт або припущення це підтверджує?",
+                )
+                st.session_state.veto_notes[item["key"]] = note_value
+
 
 def page_veto() -> None:
     render_header()
     render_premium_page_header(
         "Стоп-фактори",
-        "Risk-control checkpoint перед MCDA: перевіряє фінансові, операційні та поведінкові ризики, які можуть вимагати перегляду рішення.",
+        "Risk-control checkpoint перед MCDA: познач тільки ті ризики, які реально можуть змінити дію, а не просто виглядають неприємно.",
         progress=50,
+        completion="крок 3 / 6",
+    )
+
+    st.markdown(
+        "<div class='df-section-note'><b>UX-правило:</b> якщо стоп-фактор активовано — додай коротку нотатку. Вона піде в decision memo і зменшить ризик постфактум-раціоналізації.</div>",
+        unsafe_allow_html=True,
     )
 
     vetoes = active_vetoes()
@@ -3114,6 +3336,23 @@ def render_mcda_criterion_header(c: Mapping[str, Any]) -> None:
     </div>
     """
 
+
+def render_mcda_domain_rail(active_idx: int) -> None:
+    """Render compact progress across MCDA domains."""
+    items = []
+    for idx, domain in enumerate(DOMAINS):
+        criteria = criteria_for_domain(domain["key"])
+        completed, total = mcda_domain_completion(criteria)
+        cls = "active" if idx == active_idx else "done" if completed == total else "todo"
+        meta = f"{completed}/{total} критеріїв"
+        items.append(
+            f"<div class='df-mcda-rail-item {cls}'>"
+            f"<div class='df-mcda-rail-title'>{idx + 1}. {escape(domain['label'])}</div>"
+            f"<div class='df-mcda-rail-meta'>{escape(meta)}</div>"
+            f"</div>"
+        )
+    st.markdown("<div class='df-mcda-rail'>" + "".join(items) + "</div>", unsafe_allow_html=True)
+
 def render_mcda_page_header(domain_idx: int, domain: DomainConfig) -> None:
     """Render the MCDA domain header and progress."""
     progress_pct = (domain_idx + 1) / len(DOMAINS) * 100
@@ -3275,6 +3514,12 @@ def page_mcda() -> None:
     domain_criteria = criteria_for_domain(domain["key"])
 
     render_mcda_page_header(domain_idx, domain)
+    render_mcda_domain_rail(domain_idx)
+    completed, total = mcda_domain_completion(domain_criteria)
+    st.markdown(
+        f"<div class='df-section-note'><b>Заповнення домену:</b> {completed}/{total}. Вибирай не ідеальну, а найбільш чесну оцінку базового сценарію.</div>",
+        unsafe_allow_html=True,
+    )
     for criterion in domain_criteria:
         render_mcda_criterion(criterion)
     render_mcda_navigation(domain_idx, domain_criteria)
