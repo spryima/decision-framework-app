@@ -1692,6 +1692,153 @@ header[data-testid="stHeader"] svg {
 }
 
 
+
+/* ============================================================
+   UX POLISH OVERRIDES — no new steps, only existing screens
+   ============================================================ */
+.block-container {
+  padding-top: 2.5rem !important;
+}
+.df-prem-title {
+  font-size: clamp(25px, 2.2vw, 34px) !important;
+  letter-spacing: -0.035em !important;
+}
+.df-prem-meta {
+  max-width: 920px !important;
+  line-height: 1.45 !important;
+}
+.df-prem-progress {
+  height: 7px !important;
+  background: #e7edf5 !important;
+}
+.df-prem-progress-fill {
+  background: linear-gradient(90deg, #1e3a5f, #4f6f91) !important;
+}
+.df-prem-domain-card,
+.df-intro-card,
+.df-outcome-card,
+.df-stepper-card,
+.df-dashboard-kpi,
+.df-recommendation-panel,
+div[data-testid="stVerticalBlockBorderWrapper"] {
+  box-shadow: 0 8px 24px rgba(15,23,42,0.055) !important;
+}
+.df-step-hint {
+  border: 1px solid #dbe4ef;
+  border-left: 5px solid var(--accent);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  padding: 12px 15px;
+  margin: 8px 0 16px 0;
+  box-shadow: var(--shadow-card);
+}
+.df-step-hint-title {
+  color: var(--text-main);
+  font-size: 15px;
+  font-weight: 780;
+  margin-bottom: 3px;
+}
+.df-step-hint-body {
+  color: var(--text-body);
+  font-size: 15px;
+  line-height: 1.45;
+}
+.df-sidebar-brand {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #ffffff;
+  padding: 14px 14px 12px 14px;
+  margin: 0 0 12px 0;
+  box-shadow: var(--shadow-card);
+}
+.df-sidebar-brand-title {
+  color: var(--text-main);
+  font-size: 18px;
+  font-weight: 820;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+.df-sidebar-brand-subtitle {
+  color: var(--text-muted);
+  font-size: 13.5px;
+  margin-top: 4px;
+  line-height: 1.35;
+}
+.df-sidebar-progress {
+  height: 7px;
+  background: #e7edf5;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 11px;
+}
+.df-sidebar-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1e3a5f, #4f6f91);
+  border-radius: 999px;
+}
+.df-sidebar-state {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 10px 0 8px 0;
+}
+.df-sidebar-state-item {
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  background: #ffffff;
+  padding: 8px 9px;
+}
+.df-sidebar-state-label {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .035em;
+}
+.df-sidebar-state-value {
+  color: var(--text-main);
+  font-size: 15px;
+  font-weight: 780;
+  margin-top: 2px;
+  line-height: 1.15;
+}
+[data-testid="stSidebar"] div[data-testid="stButton"] button {
+  min-height: 39px !important;
+  border-radius: 12px !important;
+  justify-content: flex-start !important;
+  padding-left: 12px !important;
+  font-size: 14.5px !important;
+  font-weight: 680 !important;
+}
+.df-ahp-guide {
+  padding: 13px 16px !important;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+}
+.df-ahp-guide li {
+  margin: 4px 0 !important;
+}
+div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label {
+  min-height: 184px !important;
+  padding: 17px 18px 16px 22px !important;
+}
+div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label p,
+div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label div[data-testid="stMarkdownContainer"] p {
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+}
+div[data-testid="stRadio"] [role="radiogroup"][aria-label="Portfolio role"] label {
+  min-height: 255px !important;
+}
+.df-review-table td {
+  line-height: 1.48 !important;
+}
+@media (max-width: 780px) {
+  div[data-testid="stRadio"] [role="radiogroup"][aria-label^="MCDA anchor"] label {
+    min-height: auto !important;
+  }
+  .df-sidebar-state { grid-template-columns: 1fr; }
+}
+
 </style>
 """
 
@@ -1842,7 +1989,7 @@ def radio_index_from_value(options: Sequence[Any], value: Any) -> int | None:
 
 def basket_option_label(bkey: str) -> str:
     cfg = BASKET_CONFIG[bkey]
-    return cfg["label"] + "\n\n" + cfg["description"]
+    return cfg["label"] + "\n\n" + cfg.get("threshold_line", "") + "\n\n" + cfg["description"]
 
 
 def criteria_for_domain(domain_key: str) -> list[CriterionConfig]:
@@ -1860,10 +2007,9 @@ def mcda_domain_index() -> int:
 
 
 def scale_anchor_label(c: Mapping[str, Any], value: int) -> str:
-    # Keep the exact anchor text in one typographic level.
-    # This avoids optical imbalance where only some cards get a separate subtext line.
+    # Show both the score and the anchor text so MCDA cards are self-explanatory.
     raw = str(c.get("anchors", {}).get(str(value), str(value))).strip()
-    return raw if raw else str(value)
+    return f"{int(value)} — {raw}" if raw else str(value)
 
 
 def scale_anchor_index(c: Mapping[str, Any]) -> int:
@@ -2337,31 +2483,69 @@ def render_premium_intro_card(title: str, body: str) -> None:
     )
 
 
+def render_step_hint(title: str, body: str) -> None:
+    """Render a compact helper card for the current existing step."""
+    st.markdown(
+        f"""
+        <div class='df-step-hint'>
+          <div class='df-step-hint-title'>{escape(str(title))}</div>
+          <div class='df-step-hint-body'>{escape(str(body))}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_sidebar() -> None:
-    st.sidebar.title("Навігація")
     steps = [
-        ("welcome", "Вступ"),
-        ("ahp", "AHP"),
-        ("basket", "Роль у портфелі"),
-        ("veto", "Стоп-фактори"),
-        ("mcda", "MCDA"),
-        ("dashboard", "Панель рішення"),
-        ("memo", "Мемо"),
+        (PAGE_WELCOME, "Вступ"),
+        (PAGE_AHP, "Ваги"),
+        (PAGE_BASKET, "Роль"),
+        (PAGE_VETO, "Стоп-фактори"),
+        (PAGE_MCDA, "MCDA"),
+        (PAGE_DASHBOARD, "Панель"),
+        (PAGE_MEMO, "Memo"),
     ]
-    for key, label in steps:
-        if st.sidebar.button(label, use_container_width=True, key=f"nav_{key}"):
-            go(key, st.session_state.mcda_index if key == "mcda" else None)
+    current = normalize_page_key(st.session_state.get("current_step", PAGE_WELCOME))
+    current_idx = next((i for i, (key, _) in enumerate(steps) if key == current), 0)
+    progress = current_idx / (len(steps) - 1) * 100 if len(steps) > 1 else 0
 
-    st.sidebar.divider()
-    st.sidebar.caption("Поточний стан")
+    st.sidebar.markdown(
+        f"""
+        <div class='df-sidebar-brand'>
+          <div class='df-sidebar-brand-title'>Decision Framework</div>
+          <div class='df-sidebar-brand-subtitle'>Оцінка активу / напряму без зміни маршруту</div>
+          <div class='df-sidebar-progress'><div class='df-sidebar-progress-fill' style='width:{progress:.1f}%;'></div></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    for i, (key, label) in enumerate(steps, start=1):
+        if key == current:
+            button_label = f"● {i}. {label}"
+        elif i - 1 < current_idx:
+            button_label = f"✓ {i}. {label}"
+        else:
+            button_label = f"{i}. {label}"
+        if st.sidebar.button(button_label, use_container_width=True, key=f"nav_{key}"):
+            go(key, st.session_state.mcda_index if key == PAGE_MCDA else None)
+
     cr = st.session_state.get("consistency_ratio", 0.0)
-    st.sidebar.write(f"CR: **{cr:.3f}**")
     basket = st.session_state.get("portfolio_basket")
-    st.sidebar.write(f"Кошик: **{BASKET_CONFIG[basket]['label'] if basket else '—'}**")
-    st.sidebar.write(f"Stop-фактори: **{len(active_vetoes())}**")
     score = st.session_state.get("final_score")
-    st.sidebar.write(f"Score: **{format_score(score)}**")
-
+    basket_label = BASKET_CONFIG[basket]["label"] if basket else "—"
+    st.sidebar.markdown(
+        f"""
+        <div class='df-sidebar-state'>
+          <div class='df-sidebar-state-item'><div class='df-sidebar-state-label'>CR</div><div class='df-sidebar-state-value'>{cr:.3f}</div></div>
+          <div class='df-sidebar-state-item'><div class='df-sidebar-state-label'>Score</div><div class='df-sidebar-state-value'>{format_score(score)}</div></div>
+          <div class='df-sidebar-state-item'><div class='df-sidebar-state-label'>Кошик</div><div class='df-sidebar-state-value'>{escape(basket_label)}</div></div>
+          <div class='df-sidebar-state-item'><div class='df-sidebar-state-label'>Stop</div><div class='df-sidebar-state-value'>{len(active_vetoes())}</div></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 def export_draft() -> dict[str, Any]:
     """Serialize the current decision draft from session state."""
@@ -2505,7 +2689,7 @@ def page_welcome() -> None:
     render_header()
     render_premium_page_header(
         "Decision Framework",
-        "Система для структурованого ухвалення стратегічних рішень",
+        "Швидкий прохід від пріоритетів і ризиків до статусу рішення та decision memo",
         progress=8,
     )
 
@@ -2560,27 +2744,24 @@ def page_welcome() -> None:
     )
 
     with st.container(key="welcome_cta"):
-        if st.button("Почати дослідження", type="primary", use_container_width=True):
-            reset_decision_state("ahp")
+        if st.button("Почати оцінку", type="primary", use_container_width=True):
+            reset_decision_state(PAGE_AHP)
 
 def render_ahp_guide() -> None:
     """Render the static AHP instruction panel."""
     st.markdown(
         """
         <div class='df-ahp-guide'>
-            <div class='df-ahp-guide-title'>Як відповідати:</div>
+            <div class='df-ahp-guide-title'>Як відповідати</div>
             <ul>
-                <li>Не оцінюй «взагалі по життю». Оцінюй свій фактичний профіль на найближчі 12–24 місяці.</li>
-                <li>Спирайся не на самоопис, а на факти: минулі рішення, поведінку в кризі, реальні обмеження часу, реакцію на просадки, делегування, потребу в ліквідності.</li>
-                <li>Якщо сумніваєшся між двома оцінками, обери консервативнішу.</li>
-                <li>Якщо Consistency Ratio (CR) &gt; 0.10, повернись до тих пар, де відповідь була найрізкішою або суперечила іншим компромісам.</li>
-                <li>Постав собі питання: «Якби мене змусили пожертвувати одним із двох, що я захищав би першим саме зараз?»</li>
+                <li>Обирай, що важливіше саме на горизонті 12–24 місяці, а не «взагалі по життю».</li>
+                <li>Спирайся на фактичні обмеження: гроші, час, контроль, енергію, реакцію на ризик.</li>
+                <li>Якщо CR &gt; 0.10 — переглянь найрізкіші або внутрішньо суперечливі відповіді.</li>
             </ul>
         </div>
         """,
         unsafe_allow_html=True,
     )
-
 
 def render_ahp_comparison_card(pid: str) -> None:
     """Render one AHP pair comparison card and persist the selected answer."""
@@ -2713,10 +2894,10 @@ def render_ahp_navigation(cr: float) -> None:
     all_answered = answered_count >= len(PAIRWISE)
     c1, c2, c3 = st.columns([1, 1, 2])
     with c1:
-        if st.button("Назад до вступу", use_container_width=True):
+        if st.button("Назад", use_container_width=True):
             go(PAGE_WELCOME)
     with c2:
-        next_label = "Продовжити попри CR" if cr > AHP_CR_WARNING_THRESHOLD else "Продовжити до ролі"
+        next_label = "Далі попри CR" if cr > AHP_CR_WARNING_THRESHOLD else "Далі: роль у портфелі"
         if st.button(next_label, type="primary", use_container_width=True, disabled=not all_answered):
             go(PAGE_BASKET)
     if not all_answered:
@@ -2727,8 +2908,8 @@ def page_ahp() -> None:
     """Render the AHP calibration step."""
     render_header()
     render_premium_page_header(
-        "Визначення ваги кожного домену",
-        "Тут ти не оцінюєш конкретний актив чи рішення. Ти визначаєш, які критерії загалом важливіші для якісного рішення.",
+        "Ваги критеріїв",
+        "Спочатку відкалібруй, що для тебе важить більше: фінанси, стратегія, контроль, навантаження чи особиста сумісність.",
         progress=22,
     )
 
@@ -2750,7 +2931,8 @@ def page_ahp() -> None:
 
 def page_basket() -> None:
     render_header()
-    render_premium_page_header("Роль у портфелі", "Перш ніж оцінювати актив — визнач, яку роль він має виконувати у твоєму портфелі. Загальна шкала score однакова, але кожен кошик має власний admission threshold.", progress=36)
+    render_premium_page_header("Роль у портфелі", "Один і той самий score має різний сенс для стабільного активу, growth-ставки і opportunity. Спершу обери роль.", progress=36)
+    render_step_hint("Правило", "Не обирай кошик за бажаним результатом. Обирай за фактичною функцією активу в портфелі.")
 
     basket_keys = ["core", "growth", "opportunity"]
     current = st.session_state.get("portfolio_basket")
@@ -2773,14 +2955,18 @@ def page_basket() -> None:
             cont = st.form_submit_button("Продовжити до стоп-факторів", type="primary", use_container_width=True)
 
     if back:
-        go("ahp")
-    if cont and selected is not None:
-        st.session_state.portfolio_basket = selected
-        go("veto")
+        go(PAGE_AHP)
+    if cont:
+        if selected is None:
+            st.warning("Оберіть роль активу в портфелі.")
+        else:
+            st.session_state.portfolio_basket = selected
+            go(PAGE_VETO)
 
-    if current:
-        cfg = BASKET_CONFIG[current]
-        st.success(f"Поточний кошик: **{cfg['label']}**.")
+    active_basket = st.session_state.get("portfolio_basket")
+    if active_basket:
+        cfg = BASKET_CONFIG[active_basket]
+        st.success(f"Поточна роль: **{cfg['label']}**. Пороги: {cfg.get('threshold_line', '—')}")
 
 
 def render_review_protocol_table() -> None:
@@ -2832,7 +3018,7 @@ def render_veto_status_bar(vetoes: Sequence[Mapping[str, Any]]) -> None:
 def render_veto_group(group: Mapping[str, Any]) -> None:
     active_count = sum(1 for key, _ in group["items"] if st.session_state.veto_answers.get(key, False))
     title = f"{group['title']} · {active_count}/{len(group['items'])}"
-    expanded = active_count > 0
+    expanded = active_count > 0 or not any(st.session_state.veto_answers.values())
 
     with st.expander(title, expanded=expanded):
         st.markdown(f"<div class='df-risk-group-note'>{escape(group['description'])}</div>", unsafe_allow_html=True)
@@ -2862,12 +3048,13 @@ def page_veto() -> None:
     render_header()
     render_premium_page_header(
         "Стоп-фактори",
-        "Risk-control checkpoint перед MCDA: перевіряє фінансові, операційні та поведінкові ризики, які можуть вимагати перегляду рішення.",
+        "Перед MCDA відміть тільки ті ризики, які реально присутні. Це не знижує бал автоматично, але змінює якість рекомендації.",
         progress=50,
     )
 
     vetoes = active_vetoes()
     render_veto_status_bar(vetoes)
+    render_step_hint("Як користуватись", "Не шукай ризики штучно. Позначай фактор лише тоді, коли він уже проявлений або має сильні докази.")
 
     for group in VETO_RISK_GROUPS:
         render_veto_group(group)
@@ -2878,10 +3065,10 @@ def page_veto() -> None:
     c1, c2 = st.columns(2)
     with c1:
         if st.button("Назад до ролі", use_container_width=True):
-            go("basket")
+            go(PAGE_BASKET)
     with c2:
-        if st.button("Почати MCDA", type="primary", use_container_width=True):
-            go("mcda", 0)
+        if st.button("Далі: MCDA", type="primary", use_container_width=True):
+            go(PAGE_MCDA, 0)
 
 
 
@@ -3252,7 +3439,7 @@ def render_mcda_navigation(domain_idx: int, domain_criteria: Sequence[CriterionC
         if st.button("Назад", use_container_width=True):
             go(PAGE_VETO if domain_idx == 0 else PAGE_MCDA, None if domain_idx == 0 else domain_idx - 1)
     with c2:
-        next_label = "Далі" if domain_idx < len(DOMAINS) - 1 else "До панелі рішення"
+        next_label = "Далі" if domain_idx < len(DOMAINS) - 1 else "Далі: панель рішення"
         if st.button(next_label, type="primary", use_container_width=True):
             if not domain_ready:
                 mark_mcda_attempted(domain_criteria)
@@ -3263,7 +3450,7 @@ def render_mcda_navigation(domain_idx: int, domain_criteria: Sequence[CriterionC
                 calculate_scores()
                 go(PAGE_DASHBOARD)
     if not domain_ready:
-        st.caption("Щоб перейти далі, заповніть усі критерії на цій сторінці.")
+        st.caption("Щоб перейти далі, заповніть усі критерії цього домену.")
 
 
 def page_mcda() -> None:
@@ -3698,7 +3885,7 @@ def render_dashboard_navigation() -> None:
         if st.button("Назад до MCDA", use_container_width=True):
             go(PAGE_MCDA, len(DOMAINS) - 1)
     with c2:
-        if st.button("Експорт мемо", type="primary", use_container_width=True):
+        if st.button("Далі: експорт memo", type="primary", use_container_width=True):
             go(PAGE_MEMO)
 
 
@@ -3760,8 +3947,8 @@ def page_memo() -> None:
         use_container_width=True,
     )
     st.text_area("Markdown", memo, height=600)
-    if st.button("Назад до панелі рішення"):
-        go("dashboard")
+    if st.button("Назад до панелі рішення", use_container_width=True):
+        go(PAGE_DASHBOARD)
 
 
 def memo_options_text(case: Mapping[str, Any]) -> str:
